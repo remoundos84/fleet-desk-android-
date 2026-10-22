@@ -1,0 +1,45 @@
+plugins {
+    id 'com.android.application'
+}
+
+def ksProps = new Properties()
+def ksFile = file('keystore.properties')
+if (ksFile.exists()) { ksFile.withInputStream { ksProps.load(it) } }
+
+android {
+    namespace 'com.remoundos.fleetdesk'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.remoundos.fleetdesk'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(ksProps.getProperty('storeFile', 'fleetdesk.jks'))
+            storePassword ksProps.getProperty('storePassword')
+            keyAlias ksProps.getProperty('keyAlias')
+            keyPassword ksProps.getProperty('keyPassword')
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.browser:browser:1.8.0'
+}
